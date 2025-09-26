@@ -1,28 +1,44 @@
 package com.projeto.pos.biblioteca.spring.controller;
 
 
-import com.projeto.pos.biblioteca.spring.dto.AutorDTO;
-import com.projeto.pos.biblioteca.spring.service.AutorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.projeto.pos.biblioteca.spring.dto.AutorDTO;
+import com.projeto.pos.biblioteca.spring.service.AutorService;
+
+import jakarta.validation.Valid;
 
 /**
  * Controller para CRUD de Autores
  */
+
 @RestController
 @RequestMapping("/api/autores")
 @CrossOrigin(origins = "*")
 @Validated
+
 public class AutorController {
 
-    @Autowired
-    private AutorService autorService;
+    private final AutorService autorService;   // preferência: injeção por construtor
+
+    public AutorController(AutorService autorService) {
+        this.autorService = autorService;
+    }
+
+    /* ---------- CRUD ---------- */
 
     @PostMapping
     public ResponseEntity<AutorDTO> create(@Valid @RequestBody AutorDTO dto) {
@@ -30,8 +46,9 @@ public class AutorController {
         return ResponseEntity.created(URI.create("/api/autores/" + created.getId())).body(created);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AutorDTO> update(@PathVariable Long id, @Valid @RequestBody AutorDTO dto) {
+    @PutMapping("/{id}")          // único método PUT
+    public ResponseEntity<AutorDTO> update(@PathVariable Long id,
+                                           @Valid @RequestBody AutorDTO dto) {
         AutorDTO updated = autorService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
@@ -52,3 +69,6 @@ public class AutorController {
         return ResponseEntity.ok(autorService.findAll());
     }
 }
+
+
+

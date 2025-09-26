@@ -1,8 +1,8 @@
 package com.projeto.pos.biblioteca.spring.service;
 
+import java.util.List;
 
 import com.projeto.pos.biblioteca.spring.dto.ExemplarDTO;
-import java.util.List;
 
 public interface ExemplarService {
     ExemplarDTO create(ExemplarDTO dto);
@@ -10,4 +10,5 @@ public interface ExemplarService {
     void delete(Long id);
     ExemplarDTO findById(Long id);
     List<ExemplarDTO> findByLivroId(Long livroId);
+    List<ExemplarDTO> findAll();   // ✅ corrigido
 }

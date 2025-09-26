@@ -2,79 +2,87 @@ package com.projeto.pos.biblioteca.spring.controller;
 
 
 
-import com.projeto.pos.biblioteca.spring.dto.LivroDTO;
-import com.projeto.pos.biblioteca.spring.service.LivroService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import java.util.Map;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.projeto.pos.biblioteca.spring.dto.LivroDTO;
+import com.projeto.pos.biblioteca.spring.service.LivroService;
+
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/livros")
-@CrossOrigin(origins = "*") // liberar CORS para testes locais; ajuste em produção
+@CrossOrigin(origins = "*")
 @Validated
 public class LivroController {
 
-    @Autowired
-    private LivroService livroService;
+    private final LivroService livroService;
 
-    // Criar livro
+    public LivroController(LivroService livroService) {
+        this.livroService = livroService;
+    }
+
     @PostMapping
     public ResponseEntity<LivroDTO> create(@Valid @RequestBody LivroDTO dto) {
-        LivroDTO criado = livroService.create(dto);
-        return ResponseEntity.status(201).body(criado);
+        return ResponseEntity.status(201).body(livroService.create(dto));
     }
 
-    // Atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<LivroDTO> update(@PathVariable Long id, @Valid @RequestBody LivroDTO dto) {
-        LivroDTO atualizado = livroService.update(id, dto);
-        return ResponseEntity.ok(atualizado);
+    public ResponseEntity<LivroDTO> update(@PathVariable Long id,
+    @Valid @RequestBody LivroDTO dto) {
+        return ResponseEntity.ok(livroService.update(id, dto));
     }
 
-    // Remover
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         livroService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Buscar por id
     @GetMapping("/{id}")
     public ResponseEntity<LivroDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(livroService.findById(id));
     }
 
-    // Listar / buscar por título via query string ?titulo=abc
     @GetMapping
     public ResponseEntity<Page<LivroDTO>> list(
-            @RequestParam(value = "titulo", required = false) String titulo,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size
+            @RequestParam(required = false) String titulo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("titulo").ascending());
-        Page<LivroDTO> resultado = livroService.findAll(titulo, pageable);
-        return ResponseEntity.ok(resultado);
+        return ResponseEntity.ok(livroService.findAll(titulo, pageable));
     }
 
-    // Endpoint para contar exemplares:
-    // GET /api/livros/{id}/exemplares/count  -> retorna mapa com contagens por status
-    // GET /api/livros/{id}/exemplares/count?status=DISPONIVEL -> retorna apenas número
     @GetMapping("/{id}/exemplares/count")
     public ResponseEntity<?> countExemplares(
             @PathVariable Long id,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(required = false) String status
     ) {
         if (status == null) {
-            Object map = livroService.countByAllStatuses(id);
-            return ResponseEntity.ok(map);
+            return ResponseEntity.ok(livroService.countByAllStatuses(id));
         } else {
             long count = livroService.countExemplaresByStatus(id, status);
             return ResponseEntity.ok(Map.of("status", status, "count", count));
         }
     }
 }
+
 

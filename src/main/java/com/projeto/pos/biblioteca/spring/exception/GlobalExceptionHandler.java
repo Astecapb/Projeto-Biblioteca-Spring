@@ -1,13 +1,14 @@
 package com.projeto.pos.biblioteca.spring.exception;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,4 +30,12 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", ex.getMessage()));
     }
+
+@ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+public ResponseEntity<?> handleDataIntegrity(org.springframework.dao.DataIntegrityViolationException ex) {
+    String message = "Violação de integridade: " + ex.getMostSpecificCause().getMessage();
+    return ResponseEntity.badRequest().body(Map.of("message", message));
+}
+
+
 }

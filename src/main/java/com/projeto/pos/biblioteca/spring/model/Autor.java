@@ -1,8 +1,20 @@
 package com.projeto.pos.biblioteca.spring.model;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "autor")
 public class Autor {
@@ -15,6 +27,7 @@ public class Autor {
     private String nome;
 
     // Construtores
+   
     public Autor() {}
     public Autor(String nome) { this.nome = nome; }
 

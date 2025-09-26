@@ -1,12 +1,25 @@
 package com.projeto.pos.biblioteca.spring.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
  * Entidade ExemplarLivro representa cada cópia física/registro.
  */
-
+@Getter
+@Setter
 @Entity
 @Table(name = "exemplar_livro")
 public class ExemplarLivro {
@@ -27,9 +40,13 @@ public class ExemplarLivro {
     @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
-    public ExemplarLivro() {}
+    @Enumerated(EnumType.STRING)
+@Column(name = "status_conservacao")
+private StatusConservacao statusConservacao;
 
-    // Getters/Setters
+    public ExemplarLivro() { /* TODO document why this constructor is empty */ }
+
+   /*  // Getters/Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -40,5 +57,5 @@ public class ExemplarLivro {
     public void setStatus(ExemplarStatus status) { this.status = status; }
 
     public Livro getLivro() { return livro; }
-    public void setLivro(Livro livro) { this.livro = livro; }
-}
+    public void setLivro(Livro livro) { this.livro = livro; } */
+} 
